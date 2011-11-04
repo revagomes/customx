@@ -21,13 +21,18 @@ function ddd($msg, $title='') {
   dd($msg, "[$time]$title");
 }
 
+function urlfy($string){
+	return sanitize(strtolower(trim($string)));
+}
+
 /**
  * verifica a existencia de um parâmetro na URL
  * @text [string] $param a string que se quer verificar
  * @return [boolean]
  */
 function in_url($text){
-	return preg_match('/('.urlfy($text).')/i',$_SERVER['QUERY_STRING']);
+  $uri = ($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : $_GET['q'];
+	return preg_match('/('.urlfy($text).')/i',$uri);
 }
 
 function sanitize($string){
@@ -36,9 +41,6 @@ function sanitize($string){
 	return preg_replace($patterns,$replaces,$string);
 }
 
-function urlfy($string){
-	return sanitize(strtolower(trim($string)));
-}
 /**
  * alias from base_path . drupal_get_path('theme','frontec');
  */
