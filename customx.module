@@ -1,0 +1,85 @@
+<?php
+
+/**
+ * Funções de debug, multiargumentos
+ */
+function pr2() {
+	foreach(func_get_args() as $str)
+    echo "<textarea rows=5 cols=80>", print_r($str, 1), "</textarea>";
+}
+function pr3() {
+  echo "<textarea rows=5 cols=80>";
+	foreach(func_get_args() as $str)
+    echo print_r($str, 1), "\n";
+  echo "</textarea>";
+}
+
+function pr($str) { pr2($str); }
+
+function ddd($msg, $title='') {
+  $time = date('H:i:s');
+  dd($msg, "[$time]$title");
+}
+
+/**
+ * verifica a existencia de um parâmetro na URL
+ * @text [string] $param a string que se quer verificar
+ * @return [boolean]
+ */
+function in_url($text){
+	return preg_match('/('.urlfy($text).')/i',$_SERVER['QUERY_STRING']);
+}
+
+function sanitize($string){
+	$patterns = array('/ã|á|à|â/i','/é|ê/i','/í/i','/ô|õ|ó/i','/ú|ü/i','/ç/i','/\s/');
+	$replaces = array('a','e','i','o','u','c','-');
+	return preg_replace($patterns,$replaces,$string);
+}
+
+function urlfy($string){
+	return sanitize(strtolower(trim($string)));
+}
+/**
+ * alias from base_path . drupal_get_path('theme','frontec');
+ */
+function path($theme){
+	return base_path() . drupal_get_path('theme',$theme);
+}
+/**
+ * create array with params
+ * @param [mixed] elements
+ */
+function a(){
+	return func_get_args();
+}
+/**
+ * create a associtive array (hash) with params where param odd is a key em param even is a value
+ * exemple:
+ *    $a = aa('my', 1); returns array('my' => 1)
+ * @params [mixed]
+ */
+function aa(){
+  $ks = $vs = array();
+  foreach(func_get_args() as $i => $v) if($i % 2) $vs[] = $v; else $ks[] = $v;
+  if(count($ks) > count($vs)) array_push($vs,'');
+  return array_combine($ks,$vs);
+}
+
+function ie($version=false){
+  $browser = $_SERVER['HTTP_USER_AGENT'];
+  $comparsion = ($version)? 'MSIE '. $version : 'MSIE';
+  return strstr($browser,$comparsion);
+}
+
+
+function in_http_referer($text){
+  $text = preg_replace('/\//','\/',urlfy($text)); // for full paths
+  return preg_match('/('.$text.')/i',$_SERVER['HTTP_REFERER']);
+}
+
+function get_parent_term($tid){
+  return current(taxonomy_get_parents($tid));
+}
+
+
+
